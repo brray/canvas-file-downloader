@@ -3,5 +3,7 @@ A simple Python 3 script that interacts with the Canvas LMS API to download file
 
 # Usage
 Create a Canvas API key
+
 Create an environment variable called canvas_api_key and set it to your API key
+
 Run the script
