@@ -1,12 +1,12 @@
 import requests
 import os
-import urllib.request
 from pathlib import Path
+import re
 
 class Course:
     def __init__(self, id, name):
         self.id = id
-        self.name = name.replace(' ', '_').replace(':', '')
+        self.name = re.sub('[\W]', '_', name)
         self.files = []
         self.get_files()
         os.mkdir(os.path.join(Path.home(), 'canvas_documents', self.name))
