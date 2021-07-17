@@ -2,6 +2,14 @@ import requests
 import os
 from pathlib import Path
 import re
+from tqdm import tqdm
+import urllib
+
+class DownloadProgressBar(tqdm):
+    def update_to(self, b=1, bsize=1, tsize=None):
+        if tsize is not None:
+            self.total = tsize
+        self.update(b * bsize - self.n)
 
 class Course:
     def __init__(self, id, name):
@@ -33,10 +41,12 @@ class File:
         self.url = url
 
     def download_file(self, folder):
-        print('call fdl')
-        myfile = canvas.get(self.url)
-
-        open(os.path.join(Path.home(), 'canvas_documents', folder, self.filename), 'wb').write(myfile.content)
+        os.chdir(os.path.join(Path.home(), 'canvas_documents', folder))
+        
+        with DownloadProgressBar(unit='B', unit_scale=True,
+                             miniters=1, desc=self.filename) as t:
+            urllib.request.urlretrieve(self.url, filename=self.filename, reporthook=t.update_to)
+        return self.url
 
 if __name__ == '__main__':
     canvas = requests.Session()
@@ -60,5 +70,4 @@ if __name__ == '__main__':
             pass
 
     for course in courses:
-        print('call dl')
         course.download_files()
